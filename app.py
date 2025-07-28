@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from shiny.express import ui, input, render
+from shiny import reactive
+from pingouin import homoscedasticity
 from stats_jordan import is_norm_small
 
 iris_df = sns.load_dataset('iris')
@@ -36,7 +38,7 @@ with ui.layout_columns():
         ui.card_header('Summary Statistics of Full Dataset')
 
         @render.data_frame
-        def datagrid():
+        def datagrid_one():
             return render.DataGrid(format_describe(iris_df.describe()).reset_index())
 
     with ui.card(full_screen=True):
@@ -73,11 +75,16 @@ with ui.layout_columns():
 
         @render.plot
         def normality():
-            return is_norm_small(df_data=filtered_data(), by='Species', ncol_fig=3, main_label=True)
+            return is_norm_small(df_data=filtered_data(), by='Species', ncol_fig=3, main_label=False)
         
-
     with ui.card(full_screen=True):
-        ui.card_header('Homogeneity of Variances and ANOVA')
+        ui.card_header('Homoscedasticity and ANOVA')
+        
+        @render.data_frame
+        def datagrid_two():
+            levene_results = homoscedasticity(filtered_data(), dv=input.selected_variable(), group='Species')
+            return render.DataGrid(levene_results)
 
+@reactive.calc
 def filtered_data():
     return iris_df[['Species', input.selected_variable()]]   

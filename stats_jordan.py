@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from seaborn import load_dataset
 from pingouin import qqplot
 from scipy.stats import shapiro
 from math import ceil, sqrt
@@ -35,10 +34,10 @@ def is_norm_small(df_data: pd.DataFrame, by: str = None, ncol_fig: int = None, m
             statistic, p_value = shapiro(plot_data[col])
             shapiro_info: str = f"    Shapiro-Wilk\n" +\
                                 f"Statistic:  {statistic:.5f}\n"+\
-                                f"P-Value:    {p_value:.5f}"
+                                f"P-Value:   {p_value:.5f}"
             qqplot(plot_data[col], ax=axes[axes_index], confidence=confidence)
-            axes[axes_index].set_title(f'{name} {col}', fontsize=16)
-            axes[axes_index].text(0.02, 0.98, shapiro_info, transform=axes[axes_index].transAxes,  ha='left', va='top')
+            axes[axes_index].set_title(f'{name}', fontsize=12)
+            axes[axes_index].text(0.02, 0.98, shapiro_info, transform=axes[axes_index].transAxes, fontsize=9, ha='left', va='top')
             axes_index += 1
 
     [fig.delaxes(ax) for ax in axes[-ncol_fig:] if not ax.has_data()]
@@ -49,7 +48,6 @@ def is_norm_small(df_data: pd.DataFrame, by: str = None, ncol_fig: int = None, m
         fig.supylabel("Ordered quantiles", fontsize=24)
         [ax.set(xlabel='', ylabel='') for ax in axes]
     else:
-        [ax.set_title("Q-Q plot for " + ax.get_title(), fontsize=14) for ax in axes]
+        fig.suptitle(*df_data.columns.difference(['Species']))
     
-    fig.tight_layout()
     return fig
