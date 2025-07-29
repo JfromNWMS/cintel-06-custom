@@ -114,5 +114,5 @@ matplotlib
 seaborn
 shinywidgets
 scipy
-pengouin
+pingouin
 faicons
