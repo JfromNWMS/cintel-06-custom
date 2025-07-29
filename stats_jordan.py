@@ -36,16 +36,16 @@ def is_norm_small(df_data: pd.DataFrame, by: str = None, ncol_fig: int = None, m
                                 f"Statistic:  {statistic:.5f}\n"+\
                                 f"P-Value:   {p_value:.5f}"
             qqplot(plot_data[col], ax=axes[axes_index], confidence=confidence)
-            axes[axes_index].set_title(f'{name}', fontsize=12)
+            axes[axes_index].set_title(f'{name}', fontsize=10)
             axes[axes_index].text(0.02, 0.98, shapiro_info, transform=axes[axes_index].transAxes, fontsize=9, ha='left', va='top')
             axes_index += 1
 
     [fig.delaxes(ax) for ax in axes[-ncol_fig:] if not ax.has_data()]
 
     if main_label:
-        fig.suptitle(f"Quantile-Quantile plots {'by '+ by if isinstance(by, str) else ''}", fontsize=28)
-        fig.supxlabel("Theoretical quantiles", fontsize=24)
-        fig.supylabel("Ordered quantiles", fontsize=24)
+        fig.suptitle(f"Quantile-Quantile Plots for {''.join(df_data.columns.difference(['Species']))}", fontsize=10)
+        fig.supxlabel("Theoretical quantiles", fontsize=10)
+        fig.supylabel("Ordered quantiles", fontsize=10)
         [ax.set(xlabel='', ylabel='') for ax in axes]
     else:
         fig.suptitle(*df_data.columns.difference(['Species']))

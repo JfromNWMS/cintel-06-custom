@@ -115,3 +115,4 @@ seaborn
 shinywidgets
 scipy
 pengouin
+faicons
