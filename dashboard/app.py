@@ -24,7 +24,7 @@ format_dict: dict = {
 def format_describe(df_data: pd.DataFrame) -> pd.DataFrame:
     return df_data.apply(lambda row: row.map(format_dict.get(row.name, format_dict['default'])), axis=1)
 
-def is_norm_small(df_data: pd.DataFrame, by: str = None, ncol_fig: int = None, main_label: bool = True, confidence: float = 0.95) -> None:
+def is_norm_small(df_data: pd.DataFrame, by = None, ncol_fig = None, main_label: bool = True, confidence: float = 0.95) -> None:
     """
     Function is_norm_small() takes in a pandas.DataFrame and plots normal Q-Q plots 
     for all columns of the dataframe in square configuration. The Shapiro-Wilk normality
@@ -34,13 +34,13 @@ def is_norm_small(df_data: pd.DataFrame, by: str = None, ncol_fig: int = None, m
     Args:
         df_data (pd.DataFrame): Input dataframe whose columns will be plotted over.
         by (str): Name of categorical column in dataframe to plot by. Defaults to no categorical column.
-        ncol_fig (int): Number of columns to force the plot figure too.  Defaults to square configuration.
+        ncol_fig: Number of columns to force the plot figure too.  Defaults to square configuration.
         main_label (bool): True to remove the axis names from individual plots and places them as titles for main figure axes.
         confidence (float): Level of confidence between 0 and 1 at which confidence intervals are displayed.
     """
     categories: list = df_data[by].unique() if isinstance(by, str) else ['']
     num_plots: int = len(categories)*(len(df_data.columns)-1) if isinstance(by, str) else len(df_data.columns)
-    ncol_fig: int = ncol_fig if isinstance(ncol_fig, int) else ceil(sqrt(num_plots))
+    ncol_fig = ncol_fig if isinstance(ncol_fig, int) else ceil(sqrt(num_plots))
     nrow_fig: int = ceil(num_plots / ncol_fig)
     fig, axes = plt.subplots(nrows=nrow_fig, ncols=ncol_fig, figsize=(5*ncol_fig, 5*nrow_fig))
     axes = axes.flatten() 
@@ -63,12 +63,11 @@ def is_norm_small(df_data: pd.DataFrame, by: str = None, ncol_fig: int = None, m
 
     if main_label:
         fig.suptitle(f"Quantile-Quantile Plots for {''.join(df_data.columns.difference(['Species']))}", fontsize=10)
-        fig.supxlabel("Theoretical quantiles", fontsize=10)
-        fig.supylabel("Ordered quantiles", fontsize=10)
         [ax.set(xlabel='', ylabel='') for ax in axes]
     else:
         fig.suptitle(*df_data.columns.difference(['Species']))
-    
+
+    fig.tight_layout()
     return fig
 
 ui.page_opts(title='Iris Dashboard By Jordan', fillable=True)
@@ -83,7 +82,7 @@ with ui.sidebar(title='Iris Dataset'):
 
         @render.text
         def display_unique():
-            return len(iris_df['Species'].unique())
+            return str(len(iris_df['Species'].unique()))
         
     ui.input_select(
         'selected_variable',
